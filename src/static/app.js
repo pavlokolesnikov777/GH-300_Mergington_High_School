@@ -4,6 +4,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  // Escape user-supplied values before inserting into innerHTML
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -22,13 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const spotsLeft = details.max_participants - details.participants.length;
 
         activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
+          <h4>${escapeHtml(name)}</h4>
+          <p>${escapeHtml(details.description)}</p>
+          <p><strong>Schedule:</strong> ${escapeHtml(details.schedule)}</p>
+          <p><strong>Availability:</strong> ${escapeHtml(spotsLeft)} spots left</p>
           <div class="participants-section">
-            <strong>Participants (${details.participants.length}):</strong>
-            ${details.participants.length > 0 ? `<ul class="participants-list">${details.participants.map(participant => `<li><span>${participant}</span><button type="button" class="remove-participant" data-activity="${name}" data-email="${participant}" aria-label="Unregister ${participant} from ${name}" title="Unregister participant">&#128465;</button></li>`).join('')}</ul>` : '<p class="no-participants">No participants yet</p>'}
+            <strong>Participants (${escapeHtml(details.participants.length)}):</strong>
+            ${details.participants.length > 0 ? `<ul class="participants-list">${details.participants.map(participant => `<li><span>${escapeHtml(participant)}</span><button type="button" class="remove-participant" data-activity="${escapeHtml(name)}" data-email="${escapeHtml(participant)}" aria-label="Unregister ${escapeHtml(participant)} from ${escapeHtml(name)}" title="Unregister participant">&#128465;</button></li>`).join('')}</ul>` : '<p class="no-participants">No participants yet</p>'}
           </div>
         `;
 
